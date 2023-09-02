@@ -1,0 +1,19 @@
+version: "2"
+
+services:
+  pg_tile:
+    image: pramsey/pg_tileserv:latest
+    ports:
+      - 7800:7800
+    environment:
+
+      DATABASE_PASSWORD: "postgres"
+      DATABASE_HOST: "database"
+      DATABASE_USER: "postgres"
+      DATABASE_DB: "osm" 
+      DATABASE_URL: postgresql://postgres:postgres@database/osm
+    networks:
+      - mantiser
+networks:
+  mantiser:
+    external: true

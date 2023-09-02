@@ -1,0 +1,70 @@
+version: "2"
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    networks:
+      - mantiser
+  database:
+    image: postgis/postgis:13-3.1-alpine
+    container_name: database
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bonn
+    ports:
+      - 5432:5432
+    volumes:
+      - ./pgsdata:/var/lib/postgresql/data
+    networks:
+      - mantiser
+  db-gui:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_PASSWORD: postgres
+      PGADMIN_DEFAULT_EMAIL: postgres@example.com
+      POSTGRES_DB: bonn
+    ports:
+      - 5433:80
+    networks:
+      - mantiser
+  importer:
+    build: importer/
+    image: ollebo/map-importer
+    volumes:
+      - ./openstreatmap:/openstreatmap
+      - ./importer:/importer
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      PGHOST: database
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: osm
+    networks:
+      - mantiser
+  serve:
+    build: serve/
+    image: ollebo/map-serve
+    volumes:
+      - ./serve/mapnik:/mapnik
+    environment:
+      PGHOST: database
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: osm
+    networks:
+      - mantiser
+    ports:
+      - 9999:80
+networks:
+  mantiser:
+    external: true
