@@ -1,38 +1,41 @@
 # Openstreatmap in K8s
-this is the base repo for deploying an openstreat map server in k8s. The project has 2 parts.
 
-## Importer
-The importer grabs a file from geofabrik and will add the file into a postgis server.
-It will then install requerd styles and sql script for performance
+This is the base repo for deploying an Openstreat map server in k8s. The project has 2 parts.
 
-## Service
-The server is a Apacha server running renderd. It will use a mapnik to connect to our postgis server and then render the data.
-The apache also host a web page to display the map.
+## Setup
 
+### Importer
+The importer grabs a file from GEOfabrik and add the file into a Postgis server.
+It will then install styles and SQL script for performance
 
-## Not four your productions
-This is a base for mu to run and you are free to run it. But please clone the repo and build your own images to use.
-Dont trust my images to be updated regular.
+### Service
+The server is an Apache server running renderd. It will use a mapnik to connect to our postgis server and then render the data.
+The Apache also host a web page to display the map.
 
 
-## Why
-I have for a while bean trying to understand and to build map for my cluster but most of the guides are old and confusing.
-this is the result of weeks of fiddling and reading.
+### Use Own images for productions
+This is a base for my docker to run and you are free to run it. But please clone the repo and build your own images to use.
+Dont trust my images to be updated regulary.
 
 
-## How it works
-First we take the data from openstreatmap its the file you can download. The file is imported into a postgis database.
-And in then in the  database we also add some shades (Dont really now what they are good for)  styles and some sql to improve the speed (Index)
+### Why
+I have for a while trying to understand and build map for my cluster but most of the guides are old and confusing.
+This id the result of weeks of fiddling and reading.
 
-But when we want to view the map on a webclient we need to build tiles to show.
+
+### How it works
+First we take the data from openstreatmap its the file you can download. The file is imported into a Postgis database.
+And in then in the  database we also add some shades (Dont really now what they are good for)  styles and some SQL to improve the speed (Index)
+
+But when we want to view the map on a webclient we need to build tiles to show our map.
 There are many different ways but in here we uses mapnik.
 First we get a style that we can use and here we use the default openstreatmap-cargo.
 
-To generate a xml file that mapnik can use to render the data from the sql we need to make an xlm file.
-To generare the file we use a tool called carto
+To generate a xml file that mapnik can use to render the data from the sql. We need to make an xlm file.
+And for that we use the tool Cargo.
 
-Carto takes the project file from the style (openstreetmap-cargo) and generates an xml files that mapnik kan uses.
-In that mapnik file we also have SQL settings.(Hardcoded ??? be aware )
+Carto takes the project file from the style (openstreetmap-cargo) and generates anxml files that mapnik kan uses.
+In that project file we also have SQL settings.(In our docker we replace them att upstart)
 
 So now we have our database with the data. We have mapnik files that tells how things should look now we need to render our tiles.
 And to do that we use a tool called renderd.
@@ -45,19 +48,14 @@ To display the tiles to the web browser we have an apache server.
 Yeee its alot of steps :-)
 
 
-## Postgis
-Its outside this scope to setup a postgis but i uses a regular postgres operator and add the postgis image to use.
-This is working good for me.
 
-## Ingress
-I have not added any ingress to the helm but it will come.
+## Install
+You can install using the helm repo I will build and will come here
 
 
+Ore follow the manual steps and the yamls in the repo.
 
-# Install
-You can install using the helm repo i will build
-
-## Install postgress using the cloudnatove-pg
+### Install postgress using the cloudnatove-pg
 
 Lets install our postgres server using helm 
 
@@ -96,7 +94,7 @@ spec:
 
   # Require 1Gi of space
   storage:
-    size: 1Gi
+    size: 50Gi
 
 ```
 
@@ -112,7 +110,7 @@ Apply the postgis from our examle folder
 kubectl apply -f postgis/example-postgis.yaml
 ```
 
-## Install postgres using a simple docker 
+### Install postgres using a simple docker 
 This  can be used on minikube and when your are testing deployments.
 
 ```
@@ -120,7 +118,7 @@ kubectl apply -f postgis/example-standalone-postgis.yaml
 ```
 This deployment dont use any disk or storage and is only for testing the flow.
 
-## Install the Importer
+### Install the Importer
 the importer will
 
 - Get the latest sweden OSM image
@@ -146,7 +144,7 @@ Install the import with the following command
 kubectl apply -f yaml/importer.yaml
 ```
 
-## Serve
+### Serve
 Now when we have the data we can install our serve with will be a webbserver.
 the serve will
 
