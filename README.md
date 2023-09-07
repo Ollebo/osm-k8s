@@ -131,9 +131,29 @@ the importer will
 In Kubernetes it will create a job and you can rerun it to update the Posgis with new data.
 
 
+Dont like sweden ? Change to any file you like
+
+```
+        args: 
+           - apt update && apt install wget -y;
+             cd /openstreatmap/osm/;
+             wget https://download.geofabrik.de/europe/sweden-latest.osm.pbf;
+```
+
+Install the import with the following command
+
+```
+kubectl apply -f yaml/importer.yaml
+```
+
 ## Serve
 Now when we have the data we can install our serve with will be a webbserver.
 the serve will
+
+
+```
+kubectl apply -f yaml/serve.yaml
+```
 
 - Update the project with SQL settings from ENV
 - Build the mapnik tiles with cargo
@@ -147,4 +167,4 @@ the serve will
 Now you can open the map by visiting the serve service
 
 
-!img/seden.png!
+![sweden](img/sweden.png "Sweden")
