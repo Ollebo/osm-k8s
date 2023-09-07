@@ -10,7 +10,7 @@ ENV TZ=Europe/London
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt update && apt install apache2 libapache2-mod-tile renderd -y
-RUN apt update && apt install -y screen locate libapache2-mod-tile renderd git tar unzip wget bzip2 apache2 lua5.1 mapnik-utils python3-mapnik python3-psycopg2 python3-yaml gdal-bin npm fonts-noto-cjk fonts-noto-hinted fonts-noto-unhinted fonts-unifont fonts-hanazono postgresql postgresql-contrib postgis postgresql-14-postgis-3 postgresql-14-postgis-3-scripts osm2pgsql net-tools curl
+RUN apt update && apt install -y gettext-base locate libapache2-mod-tile renderd apache2 lua5.1 mapnik-utils python3-mapnik python3-psycopg2 python3-yaml gdal-bin npm fonts-noto-cjk fonts-noto-hinted fonts-noto-unhinted fonts-unifont fonts-hanazono postgresql postgresql-contrib postgis postgresql-14-postgis-3 postgresql-14-postgis-3-scripts osm2pgsql net-tools curl
 
 #Install carto 
 RUN npm install -g carto
@@ -19,8 +19,8 @@ COPY renderd /opt/renderd
 COPY www /var/www/html
 
 #Making mapnik 
-WORKDIR /opt/mapnik
-RUN carto osm-cargo/project.mml > osm-cargo/mapnik-carto.xml
+#WORKDIR /opt/mapnik
+#RUN carto osm-cargo/project.mml > osm-cargo/mapnik-carto.xml.tmp
 
 COPY renderd/apache2/*.conf /etc/apache2/sites-available/
 COPY renderd/renderd.conf /etc/renderd.conf

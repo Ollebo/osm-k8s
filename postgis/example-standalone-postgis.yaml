@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: maps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: postgres
+  template:
+    metadata:
+      labels:
+        service: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgis/postgis:15-3.3
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: osm
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  namespace: maps
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5432
+  selector:
+    service: postgres
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: maps
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5432
+  selector:
+    service: postgres
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: database
+  namespace: maps
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5432
+  selector:
+    service: postgres

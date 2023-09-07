@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: importer
+  namespace: maps
+spec:
+  template:
+    spec:
+      containers:
+      - name: importer
+        image: ollebo/map-importer
+        env:
+        - name: PGHOST
+          value: postgres-service
+        - name: PGDATABASE
+          value: osm
+        - name: PGUSER
+          value: postgres
+        - name: PGPASSWORD
+          value: postgres
+        volumeMounts:
+        - mountPath:  /openstreatmap/osm/
+          name: osm    
+      initContainers:
+      - name: get-osm-data
+        image: ubuntu
+        command: ["/bin/bash", "-c"]
+        args: 
+           - apt update && apt install wget -y;
+             cd /openstreatmap/osm/;
+             wget https://download.geofabrik.de/europe/sweden-latest.osm.pbf;
+        volumeMounts:
+        - mountPath:  /openstreatmap/osm/
+          name: osm
+      restartPolicy: Never
+      volumes:
+      - name: osm
+        emptyDir: {}

@@ -1,0 +1,28 @@
+version: "2"
+
+services:
+  tegola:
+    image: gospatial/tegola:v0.16.0
+    ports:
+      - 8288:8080
+    volumes:
+      - ./config:/data
+    command: >
+      serve --config /data/tegolia.toml
+    environment:
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_NAME: osm
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      TEGOLA_POSTGIS_SSL: disable
+      TEGOLA_REDIS_SSL: false
+      REDIS_HOST: redis:6379
+      REDIS_PASSWORD: ""
+      TEGOLA_SQL_DEBUG: LAYER_SQL
+      CACHE_TYPE: "redis"
+    networks:
+      - mantiser
+networks:
+  mantiser:
+    external: true

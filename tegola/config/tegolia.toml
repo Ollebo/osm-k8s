@@ -1,0 +1,82 @@
+# This Tegola configuration file reads environment variables for sensitive and installation-specific settings. See
+# .env-example or simply hardcode correct values for your installation.
+
+[webserver]
+port = ":8080"
+
+# Tegola offers three tile caching strategies: "file", "redis", and "s3"
+[cache]
+type = "${CACHE_TYPE}"
+
+# FileCache. See https://github.com/go-spatial/tegola/tree/master/cache/file
+# RedisCache. See https://github.com/go-spatial/tegola/tree/master/cache/redis
+# S3Cache. See https://github.com/go-spatial/tegola/tree/master/cache/s3
+#bucket = "${S3CACHE_BUCKET}"
+#basepath = "${S3CACHE_BASEPATH}"
+#region = "${S3CACHE_REGION}"
+#aws_access_key_id = "${S3CACHE_AWS_ACCESS_KEY_ID}"
+#aws_secret_access_key = "${S3CACHE_AWS_SECRET_ACCESS_KEY}"
+
+address = "${REDIS_HOST}"
+password = "${REDIS_PASSWORD}"
+ttl = 10
+max_zoom = 18
+ssl = "${TEGOLA_REDIS_SSL}"
+db = 1
+
+
+
+
+#   OpenStreetMap (OSM)
+[[providers]]
+name = "osm"
+type = "postgis"
+host = "${DB_HOST}"
+port = "${DB_PORT}"
+database = "${DB_NAME}"
+user = "${DB_USER}"
+password = "${DB_PASSWORD}"
+max_connections = 30
+
+	[[providers.layers]]
+	name = "road_8-20"
+	tablename= "osm_roads"
+	geometry_type = "LineString"
+	geometry_fieldname= "geometry"
+	
+	[[providers.layers]]
+	name = "planet"
+	geometry_fieldname = "way"
+	geometry_type = "Polygon"
+	id_fieldname = "osm_id"
+	#tablename= "planet_osm_polygon"
+    sql = "SELECT ST_AsBinary(way) AS way, osm_id FROM planet_osm_polygon WHERE way && !BBOX!"
+
+  	[[providers.layers]]
+  	name = "buildings"
+  	geometry_fieldname = "geometry"
+  	id_fieldname = "osm_id"
+  	tablename = "osm_buildings"
+
+[[maps]]
+name = "osm"
+attribution = "OpenStreetMap" # map attribution
+
+	[[maps.layers]]
+	name = "land"
+	provider_layer = "osm.road_8-20"
+	#dont_simplify = true
+	#min_zoom = 0
+	#max_zoom = 20
+
+	[[maps.layers]]
+	name = "planet"
+	provider_layer = "osm.planet"
+	#dont_simplify = true
+	#min_zoom = 0
+	#max_zoom = 20
+
+  	[[maps.layers]]
+  	provider_layer = "osm.buildings"
+  	min_zoom = 5
+  	max_zoom = 20

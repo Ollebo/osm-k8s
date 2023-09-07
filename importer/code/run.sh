@@ -6,13 +6,13 @@
 #
 #
 ## setup our database
-psql -U postgres -c "DROP DATABASE osm;"
-psql -U postgres -c "CREATE DATABASE osm;"
-psql -U postgres -d osm -c "CREATE EXTENSION postgis;"
-psql -U postgres -d osm -c "CREATE EXTENSION hstore;"
+psql -U postgres -c "DROP DATABASE $PGDATABASE;"
+psql -U postgres -c "CREATE DATABASE $PGDATABASE;"
+psql -U postgres -d $PGDATABASE -c "CREATE EXTENSION postgis;"
+psql -U postgres -d $PGDATABASE -c "CREATE EXTENSION hstore;"
 
 
-osm2pgsql -G --hstore --style styles/openstreetmap-carto.style --tag-transform-script styles/openstreetmap-carto.lua  /openstreatmap/osm/sweden-latest.osm.pbf -d osm
+osm2pgsql -G --hstore --style styles/openstreetmap-carto.style --tag-transform-script styles/openstreetmap-carto.lua  /openstreatmap/osm/sweden-latest.osm.pbf -d $PGDATABASE
 
 
 #Import sweden into osm database
@@ -50,8 +50,9 @@ osm2pgsql -G --hstore --style styles/openstreetmap-carto.style --tag-transform-s
 #done
 #
 
-
-
+#Setup external
+echo "Setup external data"
+envsubst < external-data.yml_tmp > external-data.yml
 scripts/get-external-data.py
 
 echo "Setup Helper and index"

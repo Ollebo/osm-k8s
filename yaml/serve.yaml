@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: serve
+  namespace: maps
+  labels:
+    app: serve
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: serve
+  template:
+    metadata:
+      labels:
+        app: serve
+    spec:
+      containers:
+      - name: socomp
+        image: ollebo/map-serve
+        env:
+        - name: PGHOST
+          value: postgres-service
+        - name: PGDATABASE
+          value: osm
+        - name: PGUSER
+          value: postgres
+        - name: PGPASSWORD
+          value: postgres
+        ports:
+          - containerPort: 80
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: serve
+  namespace: maps
+spec:
+  type: ClusterIP
+  selector:
+    app: serve
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: serve-node
+  namespace: maps
+spec:
+  type: NodePort
+  selector:
+    app: serve
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

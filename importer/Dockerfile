@@ -14,7 +14,7 @@ RUN apt update && apt-get install -y postgresql-client osm2pgsql -y
 RUN psql --version 
 
 RUN apt-get update && \
-    apt-get install -y git curl unzip  python3-psycopg2 python3-yaml  mapnik-utils fontconfig && \
+    apt-get install -y git curl unzip gettext-base  python3-psycopg2 python3-yaml  mapnik-utils fontconfig && \
     rm -rf /var/lib/apt/lists/*
 
 

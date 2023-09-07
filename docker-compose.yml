@@ -1,12 +1,12 @@
 version: "2"
 
 services:
-  redis:
-    image: redis:latest
-    ports:
-      - 6379:6379
-    networks:
-      - mantiser
+  #redis:
+  #  image: redis:latest
+  #  ports:
+  #    - 6379:6379
+  #  networks:
+  #    - mantiser
   database:
     image: postgis/postgis:13-3.1-alpine
     container_name: database
@@ -18,7 +18,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: bonn
+      POSTGRES_DB: osm
     ports:
       - 5432:5432
     volumes:
@@ -54,6 +54,7 @@ services:
   serve:
     build: serve/
     image: ollebo/map-serve
+    #command: tail -f /etc/fstab
     volumes:
       - ./serve/mapnik:/mapnik
     environment:
