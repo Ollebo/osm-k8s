@@ -14,6 +14,6 @@ carto /opt/mapnik/osm-cargo/project.mml > /opt/mapnik/osm-cargo/mapnik-carto.xml
 
 sleep 10
 echo "start the render"
-/usr/bin/renderd 
+/usr/bin/renderd -f & 
 echo "start the apache"
 apachectl -DFOREGROUND

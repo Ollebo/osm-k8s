@@ -60,68 +60,34 @@ Ore follow the manual steps and the yamls in the repo.
 Lets install our postgres server using helm 
 
 ```
-helm repo add cnpg https://cloudnative-pg.github.io/charts
-helm upgrade --install cnpg \
-  --namespace cnpg-system \
-  --create-namespace \
-  cnpg/cloudnative-pg
+kubectl apply  -f   https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/main/releases/cnpg-1.20.0.yaml
 ```
+This will install the cloudnative operator so that we can create postgius clusters.
+then the operator is running we can install the postgis cluster by applyting the yaml 
 
-Now when we have our postgress operatir we need to att a postgres cluster and change the image to our postgis image.
 
-This is a small yaml to use
-
-You can find the postgis image here 
-https://registry.hub.docker.com/r/postgis/postgis/
-
-```
-# Example of PostgreSQL cluster
-apiVersion: postgresql.cnpg.io/v1
-kind: Cluster
-metadata:
-  name: maps
-  namespace: maps
-spec:
-  instances: 1
-
-  # Example of rolling update strategy:
-  # - unsupervised: automated update of the primary once all
-  #                 replicas have been upgraded (default)
-  # - supervised: requires manual supervision to perform
-  #               the switchover of the primary
-  primaryUpdateStrategy: unsupervised
-  imageName: postgis/postgis:15-3.3
-
-  # Require 1Gi of space
-  storage:
-    size: 50Gi
-
-```
-
-Create the maps namespace
+### Create the maps namespace
 
 ```
 kubectl create namespace maps
 ```
 
-Apply the postgis from our examle folder
+Apply the Postgis from our examle folder
 
 ```
-kubectl apply -f postgis/example-postgis.yaml
+kubectl apply -f postgis/postgis.yaml -n maps 
 ```
 
-### Install postgres using a simple docker 
-This  can be used on minikube and when your are testing deployments.
 
-```
-kubectl apply -f postgis/example-standalone-postgis.yaml 
-```
-This deployment dont use any disk or storage and is only for testing the flow.
+
+
+
+
 
 ### Install the Importer
 the importer will
 
-- Get the latest sweden OSM image
+- Get the latest Sweden OSM image
 - Add it to the postgis using the ENV in the yaml file
 - Setup Shades file from OSM-Cargo
 - Setup sql index for performance
@@ -145,20 +111,19 @@ kubectl apply -f yaml/importer.yaml
 ```
 
 ### Serve
-Now when we have the data we can install our serve with will be a webbserver.
-the serve will
+Now when we have the data we can install our serve with will be a webbserver and render the tiles .
 
-
-```
-kubectl apply -f yaml/serve.yaml
-```
-
+The serve will
 - Update the project with SQL settings from ENV
 - Build the mapnik tiles with cargo
 - start reanderd with mapnik
 - Setup a GUI so you can watch the map in apache defualt
 - Start a apache server so you can see the map
 
+
+```
+kubectl apply -f yaml/serve.yaml
+```
 
 
 ## Visit the MAP

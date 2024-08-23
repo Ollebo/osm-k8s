@@ -1,0 +1,11 @@
+image:
+  repository: postgis/postgis
+  tag: 14-master
+primary:
+  extraEnvVars:
+    - name: POSTGRES_HOST_AUTH_METHOD
+      value: "trust"
+    - name: POSTGRES_DB
+      value: "osm"
+  persistence:
+    size: 40Gi

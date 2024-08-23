@@ -20,13 +20,19 @@ spec:
         image: ollebo/map-serve
         env:
         - name: PGHOST
-          value: postgres-service
+          value: postgis-rw
         - name: PGDATABASE
           value: osm
         - name: PGUSER
-          value: postgres
+          valueFrom:
+            secretKeyRef:
+              name: postgis-app
+              key: username
         - name: PGPASSWORD
-          value: postgres
+          valueFrom:
+            secretKeyRef:
+              name: postgis-app
+              key: password
         ports:
           - containerPort: 80
 

@@ -6,10 +6,10 @@
 #
 #
 ## setup our database
-psql -U postgres -c "DROP DATABASE $PGDATABASE;"
-psql -U postgres -c "CREATE DATABASE $PGDATABASE;"
-psql -U postgres -d $PGDATABASE -c "CREATE EXTENSION postgis;"
-psql -U postgres -d $PGDATABASE -c "CREATE EXTENSION hstore;"
+psql -U $PGUSER -c "DROP DATABASE $PGDATABASE;"
+psql -U $PGUSER -c "CREATE DATABASE $PGDATABASE;"
+psql -U $PGUSER -d $PGDATABASE -c "CREATE EXTENSION postgis;"
+psql -U $PGUSER -d $PGDATABASE -c "CREATE EXTENSION hstore;"
 
 
 osm2pgsql -G --hstore --style styles/openstreetmap-carto.style --tag-transform-script styles/openstreetmap-carto.lua  /openstreatmap/osm/sweden-latest.osm.pbf -d $PGDATABASE
