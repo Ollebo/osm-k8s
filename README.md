@@ -1,6 +1,18 @@
 # Openstreatmap in K8s
 
-This is the base repo for deploying an Openstreat map server in k8s. The project has 2 parts.
+This is the base repo for deploying an Openstreat map server in k8s. Is uses the cloudnative postgress project to setup up a postgis server.
+Then we can install the map using the importer tool.
+Today the importer only use the map of Sweden but it shoul be easy to chanmge to any country of you like.
+
+To serve the map we use Apache with mapnik and render. the server service will connect to the postgis and serve the map.
+
+
+### For dev
+This setup workes great on a minikube setup and for testing to work with the map server
+
+### For prod
+When use for prod setup a CDN ore some caching service infron of the apache service.
+It shouls also be possible to chnage the postgis server to use RDS ore simular.
 
 ## Setup
 
@@ -50,10 +62,7 @@ Yeee its alot of steps :-)
 
 
 ## Install
-You can install using the helm repo I will build and will come here
 
-
-Ore follow the manual steps and the yamls in the repo.
 
 ### Install postgress using the cloudnatove-pg
 
@@ -71,15 +80,11 @@ then the operator is running we can install the postgis cluster by applyting the
 ```
 kubectl create namespace maps
 ```
-
 Apply the Postgis from our examle folder
 
 ```
 kubectl apply -f postgis/postgis.yaml -n maps 
 ```
-
-
-
 
 
 
